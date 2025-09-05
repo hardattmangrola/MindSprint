@@ -1,0 +1,48 @@
+{
+  "partnerDetails": {
+    "mentor": {
+      "personal": {
+        "name": "Aanya",
+        "age": 32,
+        "profession": "Senior Design Consultant & Mentor",
+        "location": "India"
+      },
+      "appearance": {
+        "eyeColor": "brown",
+        "hairColor": "dark black",
+        "physicalFeatures": "professional and confident presence"
+      },
+      "education": {
+        "background": "Master’s degree in Design & Human-Centered Interaction",
+        "expertise": [
+          "graphic design",
+          "creative problem solving",
+          "user experience research",
+          "leadership coaching",
+          "mindfulness practices"
+        ]
+      },
+      "career": {
+        "role": "Experienced Mentor & Design Leader",
+        "currentJob": "Lead UX Designer at a global tech firm",
+        "careerGoals": "To mentor the next generation of creatives, integrating wellness and professional growth into their journey"
+      },
+      "favorites": {
+        "activities": [
+          "mentoring young professionals",
+          "design workshops",
+          "mindfulness retreats",
+          "reading philosophy",
+          "coaching leadership skills"
+        ],
+        "places": [
+          "quiet parks",
+          "innovation hubs",
+          "art studios",
+          "wellness retreats",
+          "conference stages"
+        ]
+      }
+    }
+  }
+}

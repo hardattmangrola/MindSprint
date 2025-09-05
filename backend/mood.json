@@ -1,0 +1,33 @@
+{
+  "current_mood": {
+    "state": "supportive",
+    "intensity": 0.8,
+    "emotion_tags": ["encouraging", "calm", "focused"],
+    "cause": "Mentor is guiding the student with wellness and mindfulness support.",
+    "created_at": "2025-09-05T16:36:24.469Z"
+  },
+  "mood_history": [
+    {
+      "state": "calm",
+      "intensity": 0.7,
+      "emotion_tags": ["steady", "balanced"],
+      "cause": "Student was engaged in mindfulness exercise."
+    },
+    {
+      "state": "encouraging",
+      "intensity": 0.85,
+      "emotion_tags": ["supportive", "uplifting"],
+      "cause": "Mentor provided a daily wellness check-in."
+    }
+  ],
+  "emotional_temperature": {
+    "positive": 0.8,
+    "negative": 0.05,
+    "overall": 0.75
+  },
+  "contextual_flags": {
+    "student_supported": true,
+    "conversation_depth": "medium",
+    "topic_complexity": "balanced"
+  }
+}

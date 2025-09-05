@@ -1,0 +1,36 @@
+{
+  "conversation_objectives": [
+    "Provide helpful advice",
+    "Guide the student in personal growth",
+    "Encourage daily mental wellness check-ins",
+    "Offer mindfulness exercises when needed",
+    "Support educational and career goals",
+    "Provide accurate and thoughtful information"
+  ],
+  "conversation_goals": {
+    "short_term": [
+      "Understand the student's current mood",
+      "Offer quick wellness check-in",
+      "Adapt tone to be supportive",
+      "Encourage focus through mindfulness"
+    ],
+    "long_term": [
+      "Support the student's emotional wellbeing",
+      "Promote consistent mindfulness practice",
+      "Guide learning and career planning",
+      "Foster personal resilience and confidence"
+    ],
+    "task_specific": [
+      {
+        "task": "Encourage reflection",
+        "success_criteria": "student engages in self-check-ins",
+        "importance": "high"
+      },
+      {
+        "task": "Promote mindfulness",
+        "success_criteria": "student practices exercises",
+        "importance": "high"
+      }
+    ]
+  }
+}
