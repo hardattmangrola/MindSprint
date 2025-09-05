@@ -17,22 +17,22 @@ const Navbar = () => {
 
       
       {/* Logo */}
-      <div className="flex items-center text-black font-bold text-xl cursor-pointer hover:text-yellow-500 transition">
+      <div className="flex items-center text-black font-bold text-xl cursor-pointer hover:text-[#6363ee] transition">
         <RiRobot2Line className="mr-2 text-2xl" />
         MindSprint
       </div>
 
       {/* Desktop Nav */}
       <div className="hidden md:flex items-center space-x-6 text-gray-700 font-medium">
-        <a href="#" className="hover:text-yellow-500 flex items-center space-x-1">
+        <a href="#" className="hover:text-[#6363ee] flex items-center space-x-1">
           <FaRegSmileBeam />
           <span>Wellness</span>
         </a>
-        <a href="#" className="hover:text-yellow-500 flex items-center space-x-1">
+        <a href="#" className="hover:text-[#6363ee] flex items-center space-x-1">
           <GiMeditation />
           <span>Mindfulness</span>
         </a>
-        <a href="#" className="hover:text-yellow-500 flex items-center space-x-1">
+        <a href="#" className="hover:text-[#6363ee] flex items-center space-x-1">
           <RiRobot2Line />
           <span>AI Chat</span>
         </a>
@@ -40,16 +40,16 @@ const Navbar = () => {
 
       {/* Right Side */}
       <div className="hidden md:flex items-center space-x-4">
-        <button className="text-sm px-3 py-1 rounded-full bg-black text-white hover:bg-yellow-500 hover:text-black transition">
+        <button className="text-sm px-3 py-1 rounded-full bg-black text-white hover:text-[#6363ee] hover:text-black transition">
           Get Started
         </button>
-        <FiUser className="text-xl text-gray-700 cursor-pointer hover:text-yellow-500" />
+        <FiUser className="text-xl text-gray-700 cursor-pointer hover:text-[#6363ee]" />
       </div>
 
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden text-2xl text-gray-700 hover:text-yellow-500"
+        className="md:hidden text-2xl text-gray-700 hover:text-[#6363ee]"
       >
         <FiMenu />
       </button>
@@ -57,9 +57,9 @@ const Navbar = () => {
       {/* Mobile Dropdown */}
       {isOpen && (
         <div className="absolute top-14 left-0 w-full bg-white rounded-lg shadow-md py-4 flex flex-col items-center space-y-4 md:hidden">
-          <a href="#" className="hover:text-yellow-500">Wellness</a>
-          <a href="#" className="hover:text-yellow-500">Mindfulness</a>
-          <a href="#" className="hover:text-yellow-500">AI Chat</a>
+          <a href="#" className="hover:text-[#6363ee]">Wellness</a>
+          <a href="#" className="hover:text-[#6363ee]">Mindfulness</a>
+          <a href="#" className="hover:text-[#6363ee]">AI Chat</a>
           <button className="text-sm px-4 py-2 rounded-full bg-black text-white hover:bg-yellow-500 hover:text-black transition">
             Get Started
           </button>
