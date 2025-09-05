@@ -1,11 +1,32 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useBackend } from './backend';
+import { Send, Sparkles, Heart, Brain, Target, Zap } from 'lucide-react';
 
-const Chat = () => {
+// Mock backend hook for demo purposes
+const useBackend = () => ({
+  sendMessage: async (message) => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return {
+      text: "Thank you for sharing that with me. I'm here to support you on your wellness journey. How would you like to explore this further?",
+      moodEmoji: "🌟"
+    };
+  },
+  isLoading: false,
+  error: null,
+  getWellnessCheckIn: () => "How are you feeling today? Let's do a quick wellness check-in.",
+  getMindfulnessExercise: () => ({
+    title: "Breathing Exercise",
+    description: "A simple 5-minute breathing technique to center yourself."
+  }),
+  currentMood: { state: 'Supportive' },
+  moodEmoji: "🤗",
+  mentorName: "Aria"
+});
+
+const Chat = ({ onClose }) => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Welcome to MindSprint! I'm here to help with your mental wellness journey.",
+      text: "Hello! I'm Aria, your mental wellness mentor. I'm here to support you with daily check-ins, mindfulness exercises, and emotional guidance. How are you feeling today?",
       isBot: true,
       timestamp: new Date(),
       mood: null,
@@ -14,11 +35,11 @@ const Chat = () => {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [showWellnessMenu, setShowWellnessMenu] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
   
   const { 
     sendMessage, 
-    isLoading, 
     error, 
     getWellnessCheckIn, 
     getMindfulnessExercise,
@@ -27,26 +48,10 @@ const Chat = () => {
     mentorName
   } = useBackend();
 
-  // Scroll to bottom when new messages arrive
+  // Auto-scroll to bottom
   useEffect(() => {
-    // Auto-scroll functionality will be added later
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  // Update welcome message with mentor name
-  useEffect(() => {
-    if (messages.length === 1 && messages[0].id === 1) {
-      setMessages([
-        {
-          id: 1,
-          text: `Hello! I'm ${mentorName}, your mental wellness mentor. I'm here to support you with daily check-ins, mindfulness exercises, and emotional guidance. How are you feeling today?`,
-          isBot: true,
-          timestamp: new Date(),
-          mood: null,
-          moodEmoji: moodEmoji
-        }
-      ]);
-    }
-  }, [mentorName, currentMood, moodEmoji]);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
@@ -61,10 +66,12 @@ const Chat = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputValue;
     setInputValue('');
+    setIsLoading(true);
 
     try {
-      const response = await sendMessage(inputValue);
+      const response = await sendMessage(currentInput);
       if (response) {
         const botMessage = {
           id: Date.now() + 1,
@@ -78,6 +85,8 @@ const Chat = () => {
       }
     } catch (err) {
       console.error('Error sending message:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -106,49 +115,86 @@ const Chat = () => {
     setShowWellnessMenu(false);
   };
 
+  const wellnessOptions = [
+    { 
+      icon: Heart, 
+      label: 'Daily Check-in', 
+      action: handleWellnessCheckIn,
+      gradient: 'from-pink-500 to-rose-500'
+    },
+    { 
+      icon: Brain, 
+      label: 'Mindfulness', 
+      action: handleMindfulnessExercise,
+      gradient: 'from-purple-500 to-indigo-500'
+    },
+    { 
+      icon: Zap, 
+      label: 'Feeling Stressed', 
+      action: () => handleQuickMessage("I'm feeling stressed today"),
+      gradient: 'from-orange-500 to-red-500'
+    },
+    { 
+      icon: Target, 
+      label: 'Need Motivation', 
+      action: () => handleQuickMessage("I need some motivation"),
+      gradient: 'from-emerald-500 to-teal-500'
+    }
+  ];
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-[600px] w-full max-w-md mx-auto bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-purple-500/20">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-        <div className="flex items-center space-x-2">
-          <span className="font-semibold">{mentorName}</span>
-          <span className="text-sm opacity-80">{moodEmoji}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <span className="text-xs opacity-80">
-            {currentMood?.state || 'Supportive'}
-          </span>
-          <span className="text-xs opacity-80">Active Now</span>
+      <div className="relative px-6 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-700 backdrop-blur-sm">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+              <span className="text-lg">{moodEmoji}</span>
+            </div>
+            <div>
+              <h3 className="font-semibold text-white text-lg">{mentorName}</h3>
+              <p className="text-white/80 text-xs">Mental Wellness Mentor</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="w-2 h-2 bg-green-400 rounded-full mb-1 shadow-lg shadow-green-400/50"></div>
+            <span className="text-white/90 text-xs font-medium">Online</span>
+          </div>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white/70">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-purple-600/50 scrollbar-track-transparent">
         {messages.map((message) => (
           <div key={message.id} className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}>
-            <div className={`max-w-[70%] px-3 py-2 rounded-lg ${
+            <div className={`max-w-[85%] px-4 py-3 rounded-2xl shadow-lg ${
               message.isBot 
-                ? 'bg-gray-100 text-gray-900' 
-                : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                ? 'bg-slate-800/80 text-slate-100 backdrop-blur-sm border border-slate-700/50' 
+                : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-purple-500/25'
             }`}>
-              <div className="flex items-center space-x-2 mb-1">
-                {message.isBot && message.moodEmoji && (
-                  <span className="text-sm">{message.moodEmoji}</span>
-                )}
-                <span className="text-xs opacity-70">
-                  {message.timestamp.toLocaleTimeString()}
+              <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.text}</div>
+              <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/10">
+                <span className="text-xs opacity-60">
+                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
+                {message.isBot && message.moodEmoji && (
+                  <span className="text-xs">{message.moodEmoji}</span>
+                )}
               </div>
-              <div className="whitespace-pre-wrap">{message.text}</div>
             </div>
           </div>
         ))}
         
         {isLoading && (
           <div className="flex justify-start">
-            <div className="max-w-[70%] px-3 py-2 rounded-lg bg-gray-100 text-gray-900">
-              <div className="flex items-center space-x-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600"></div>
+            <div className="max-w-[85%] px-4 py-3 rounded-2xl bg-slate-800/80 text-slate-100 backdrop-blur-sm border border-slate-700/50 shadow-lg">
+              <div className="flex items-center space-x-3">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                </div>
                 <span className="text-sm opacity-70">{mentorName} is thinking...</span>
               </div>
             </div>
@@ -157,9 +203,9 @@ const Chat = () => {
         
         {error && (
           <div className="flex justify-start">
-            <div className="max-w-[70%] px-3 py-2 rounded-lg bg-red-100 text-red-800">
-              <div className="font-semibold">Error:</div>
-              <div className="text-sm mt-1">{error}</div>
+            <div className="max-w-[85%] px-4 py-3 rounded-2xl bg-red-900/80 text-red-100 backdrop-blur-sm border border-red-700/50 shadow-lg">
+              <div className="font-semibold text-sm">Connection Error</div>
+              <div className="text-xs mt-1 opacity-80">{error}</div>
             </div>
           </div>
         )}
@@ -169,66 +215,65 @@ const Chat = () => {
 
       {/* Wellness Menu */}
       {showWellnessMenu && (
-        <div className="px-4 py-2 bg-blue-50 border-t">
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={handleWellnessCheckIn}
-              className="px-3 py-1 text-xs bg-blue-500 text-white rounded-full hover:bg-blue-600 transition"
-            >
-              Daily Check-in
-            </button>
-            <button
-              onClick={handleMindfulnessExercise}
-              className="px-3 py-1 text-xs bg-green-500 text-white rounded-full hover:bg-green-600 transition"
-            >
-              Mindfulness Exercise
-            </button>
-            <button
-              onClick={() => handleQuickMessage("I'm feeling stressed today")}
-              className="px-3 py-1 text-xs bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
-            >
-              Feeling Stressed
-            </button>
-            <button
-              onClick={() => handleQuickMessage("I need some motivation")}
-              className="px-3 py-1 text-xs bg-purple-500 text-white rounded-full hover:bg-purple-600 transition"
-            >
-              Need Motivation
-            </button>
-            <button
-              onClick={() => handleQuickMessage("Can you help me with my goals?")}
-              className="px-3 py-1 text-xs bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition"
-            >
-              Goal Setting
-            </button>
+        <div className="px-4 py-3 bg-slate-800/50 backdrop-blur-sm border-t border-slate-700/50">
+          <div className="grid grid-cols-2 gap-2">
+            {wellnessOptions.map((option, index) => {
+              const Icon = option.icon;
+              return (
+                <button
+                  key={index}
+                  onClick={option.action}
+                  className={`group relative px-3 py-2 rounded-xl bg-gradient-to-r ${option.gradient} text-white text-xs font-medium transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95 overflow-hidden`}
+                >
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors"></div>
+                  <div className="relative flex items-center justify-center space-x-2">
+                    <Icon size={14} />
+                    <span>{option.label}</span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
 
       {/* Input */}
-      <div className="flex items-center p-2 border-t bg-white">
-        <button
-          onClick={() => setShowWellnessMenu(!showWellnessMenu)}
-          className="mr-2 px-3 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition text-sm"
-        >
-          🌟 Wellness
-        </button>
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Share how you're feeling or ask for guidance..."
-          className="flex-1 px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-          disabled={isLoading}
-        />
-        <button
-          onClick={handleSendMessage}
-          disabled={!inputValue.trim() || isLoading}
-          className="ml-2 px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? '...' : 'Send'}
-        </button>
+      <div className="p-4 bg-slate-800/30 backdrop-blur-sm border-t border-slate-700/50">
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => setShowWellnessMenu(!showWellnessMenu)}
+            className={`group p-3 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 ${
+              showWellnessMenu 
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg shadow-purple-500/25' 
+                : 'bg-slate-700/50 hover:bg-slate-600/50'
+            }`}
+          >
+            <Sparkles 
+              size={18} 
+              className={`transition-colors ${showWellnessMenu ? 'text-white' : 'text-slate-300'}`} 
+            />
+          </button>
+          
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Share how you're feeling..."
+              className="w-full px-4 py-3 rounded-xl bg-slate-700/50 text-slate-100 placeholder-slate-400 border border-slate-600/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all backdrop-blur-sm"
+              disabled={isLoading}
+            />
+          </div>
+          
+          <button
+            onClick={handleSendMessage}
+            disabled={!inputValue.trim() || isLoading}
+            className="group p-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          >
+            <Send size={18} className="transition-transform group-hover:translate-x-0.5" />
+          </button>
+        </div>
       </div>
     </div>
   );

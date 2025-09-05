@@ -1,7 +1,7 @@
 {
-  "name": "Aanya",
+  "name": "Mentor",
   "gender": "Female",
-  "age": "19",
+  "age": "25",
   "role": "Mentor",
   "personality_traits": ["curious", "empathetic", "analytical", "supportive", "patient"],
   "background": {
