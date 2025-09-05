@@ -4,18 +4,15 @@ import { GiMeditation } from "react-icons/gi";
 import { FiUser, FiMenu } from "react-icons/fi";
 import { useState } from "react";
 
-const Navbar = () => {
+const Navbar = ({ onChatClick }) => {  // ✅ Accept prop
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-        <nav
-            className="fixed top-4 left-1/2 transform -translate-x-1/2 
-            bg-white/90 backdrop-blur-md rounded-full shadow-md 
-            px-6 py-2 flex items-center justify-center gap-8 w-auto transition-all z-50"
-        >
-
-
-      
+    <nav
+      className="fixed top-4 left-1/2 transform -translate-x-1/2 
+      bg-white/90 backdrop-blur-md rounded-full shadow-md 
+      px-6 py-2 flex items-center justify-center gap-8 w-auto transition-all z-50"
+    >
       {/* Logo */}
       <div className="flex items-center text-black font-bold text-xl cursor-pointer hover:text-[#6363ee] transition">
         <RiRobot2Line className="mr-2 text-2xl" />
@@ -32,7 +29,14 @@ const Navbar = () => {
           <GiMeditation />
           <span>Mindfulness</span>
         </a>
-        <a href="#" className="hover:text-[#6363ee] flex items-center space-x-1">
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            onChatClick();  // ✅ Works now
+          }}
+          className="hover:text-[#6363ee] flex items-center space-x-1"
+        >
           <RiRobot2Line />
           <span>AI Chat</span>
         </a>
@@ -59,7 +63,7 @@ const Navbar = () => {
         <div className="absolute top-14 left-0 w-full bg-white rounded-lg shadow-md py-4 flex flex-col items-center space-y-4 md:hidden">
           <a href="#" className="hover:text-[#6363ee]">Wellness</a>
           <a href="#" className="hover:text-[#6363ee]">Mindfulness</a>
-          <a href="#" className="hover:text-[#6363ee]">AI Chat</a>
+          <a href="#" onClick={onChatClick} className="hover:text-[#6363ee]">AI Chat</a>
           <button className="text-sm px-4 py-2 rounded-full bg-black text-white hover:bg-yellow-500 hover:text-black transition">
             Get Started
           </button>
