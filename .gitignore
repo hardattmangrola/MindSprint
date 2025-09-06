@@ -26,3 +26,4 @@ dist-ssr
 .env
 .gitignore
 node_modules
+HOST.md
