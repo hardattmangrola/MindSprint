@@ -3,7 +3,9 @@ import Navbar from "./components/Navbar";
 import Spline from "@splinetool/react-spline";
 import Chat from "./components/chat";
 import Wellness from "./components/wellness";
+import Mindfulness from "./components/mindfullness";
 import Login from "./Login";
+
 
 const App = () => {
   const [showChat, setShowChat] = useState(false);
@@ -109,6 +111,7 @@ const App = () => {
       )}
       
       {currentPage === 'wellness' && <Wellness />}
+      {currentPage === 'mindfulness' && <Mindfulness />}
 
       {/* Floating Chat Button */}
       <button
