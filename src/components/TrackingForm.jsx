@@ -165,7 +165,7 @@ const TrackingForm = ({ onClose }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Mood Score (1-10)
                 </label>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 mb-2">
                   <span className="text-sm text-gray-500">1</span>
                   <input
                     type="range"
@@ -178,6 +178,17 @@ const TrackingForm = ({ onClose }) => {
                   <span className="text-sm text-gray-500">10</span>
                   <span className="text-lg font-bold text-gray-800 w-8">{formData.moodScore}</span>
                 </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-500">Manual input:</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={formData.moodScore}
+                    onChange={(e) => handleInputChange('moodScore', parseInt(e.target.value) || 1)}
+                    className="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -188,7 +199,7 @@ const TrackingForm = ({ onClose }) => {
               <Zap className="inline mr-2" size={16} />
               Energy Level (1-10)
             </label>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 mb-2">
               <span className="text-sm text-gray-500">1</span>
               <input
                 type="range"
@@ -201,6 +212,17 @@ const TrackingForm = ({ onClose }) => {
               <span className="text-sm text-gray-500">10</span>
               <span className="text-lg font-bold text-gray-800 w-8">{formData.energy}</span>
             </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-500">Manual input:</span>
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={formData.energy}
+                onChange={(e) => handleInputChange('energy', parseInt(e.target.value) || 1)}
+                className="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
           </div>
 
           {/* Stress Level */}
@@ -209,7 +231,7 @@ const TrackingForm = ({ onClose }) => {
               <AlertTriangle className="inline mr-2" size={16} />
               Stress Level (1-10)
             </label>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 mb-2">
               <span className="text-sm text-gray-500">1</span>
               <input
                 type="range"
@@ -222,6 +244,17 @@ const TrackingForm = ({ onClose }) => {
               <span className="text-sm text-gray-500">10</span>
               <span className="text-lg font-bold text-gray-800 w-8">{formData.stress}</span>
             </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-500">Manual input:</span>
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={formData.stress}
+                onChange={(e) => handleInputChange('stress', parseInt(e.target.value) || 1)}
+                className="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
           </div>
 
           {/* Wellness Score */}
@@ -230,7 +263,7 @@ const TrackingForm = ({ onClose }) => {
               <Activity className="inline mr-2" size={16} />
               Overall Wellness (1-10)
             </label>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 mb-2">
               <span className="text-sm text-gray-500">1</span>
               <input
                 type="range"
@@ -242,6 +275,17 @@ const TrackingForm = ({ onClose }) => {
               />
               <span className="text-sm text-gray-500">10</span>
               <span className="text-lg font-bold text-gray-800 w-8">{formData.wellness}</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-500">Manual input:</span>
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={formData.wellness}
+                onChange={(e) => handleInputChange('wellness', parseInt(e.target.value) || 1)}
+                className="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
             </div>
           </div>
 

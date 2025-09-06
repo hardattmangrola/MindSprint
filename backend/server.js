@@ -478,6 +478,95 @@ app.get('/api/tracking/statistics', authenticateToken, async (req, res) => {
   }
 });
 
+// Add dummy data for testing
+app.post('/api/tracking/dummy-data', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    
+    // Create dummy data for September 1-5, 2025
+    const dummyData = [
+      {
+        userId: userId,
+        date: new Date('2025-09-01'),
+        mood: 'happy',
+        moodScore: 8,
+        energy: 7,
+        stress: 3,
+        wellness: 8,
+        notes: 'Great start to the month! Feeling energized and positive.',
+        activities: ['exercise', 'meditation'],
+        sleepHours: 7.5
+      },
+      {
+        userId: userId,
+        date: new Date('2025-09-02'),
+        mood: 'very_happy',
+        moodScore: 9,
+        energy: 8,
+        stress: 2,
+        wellness: 9,
+        notes: 'Amazing day! Completed all tasks and had time for hobbies.',
+        activities: ['exercise', 'reading', 'hobby'],
+        sleepHours: 8
+      },
+      {
+        userId: userId,
+        date: new Date('2025-09-03'),
+        mood: 'neutral',
+        moodScore: 6,
+        energy: 5,
+        stress: 5,
+        wellness: 6,
+        notes: 'Average day. Some work stress but manageable.',
+        activities: ['work', 'rest'],
+        sleepHours: 6.5
+      },
+      {
+        userId: userId,
+        date: new Date('2025-09-04'),
+        mood: 'sad',
+        moodScore: 4,
+        energy: 4,
+        stress: 7,
+        wellness: 4,
+        notes: 'Challenging day. Feeling overwhelmed with work.',
+        activities: ['work'],
+        sleepHours: 5.5
+      },
+      {
+        userId: userId,
+        date: new Date('2025-09-05'),
+        mood: 'happy',
+        moodScore: 7,
+        energy: 6,
+        stress: 4,
+        wellness: 7,
+        notes: 'Recovery day. Took time for self-care and relaxation.',
+        activities: ['meditation', 'rest', 'social'],
+        sleepHours: 8.5
+      }
+    ];
+
+    // Clear existing data for these dates first
+    await UserTracking.deleteMany({
+      userId: userId,
+      date: { $in: dummyData.map(d => d.date) }
+    });
+
+    // Insert dummy data
+    const result = await UserTracking.insertMany(dummyData);
+
+    res.json({
+      message: 'Dummy data added successfully',
+      count: result.length,
+      data: result
+    });
+  } catch (error) {
+    console.error('Error adding dummy data:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running', timestamp: new Date().toISOString() });

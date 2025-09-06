@@ -31,6 +31,32 @@ const Profile = ({ user, onLogout }) => {
     }
   };
 
+  const addDummyData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/tracking/dummy-data`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert(`Successfully added ${result.count} dummy data entries!`);
+        // Refresh the stats
+        fetchUserStats();
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to add dummy data');
+      }
+    } catch (error) {
+      console.error('Error adding dummy data:', error);
+      alert('Error adding dummy data');
+    }
+  };
+
   const tabs = [
     { id: 'calendar', label: 'Calendar', icon: Calendar },
     { id: 'stats', label: 'Statistics', icon: BarChart3 },
@@ -251,6 +277,18 @@ const Profile = ({ user, onLogout }) => {
                     <button className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-lg hover:from-purple-700 hover:to-pink-600 transition">
                       <Download size={16} />
                       <span>Export Data</span>
+                    </button>
+                  </div>
+
+                  <div className="bg-white/10 rounded-lg p-4">
+                    <h4 className="text-lg font-semibold text-white mb-2">Test Data</h4>
+                    <p className="text-gray-300 mb-4">Add dummy data for September 1-5, 2025 to test the system.</p>
+                    <button 
+                      onClick={addDummyData}
+                      className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-600 to-blue-500 text-white rounded-lg hover:from-green-700 hover:to-blue-600 transition"
+                    >
+                      <span>📊</span>
+                      <span>Add Test Data</span>
                     </button>
                   </div>
                 </div>

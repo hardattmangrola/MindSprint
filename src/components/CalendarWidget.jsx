@@ -118,13 +118,27 @@ const CalendarWidget = ({ user }) => {
       if (response.ok) {
         const result = await response.json();
         if (result.statistics) {
-          // Create PDF content
-          const pdfContent = createPDFContent(result.statistics, currentDate);
-          downloadPDF(pdfContent, `wellness-report-${currentDate.getFullYear()}-${currentDate.getMonth() + 1}.pdf`);
+          // Create HTML content for PDF
+          const htmlContent = createPDFContent(result.statistics, currentDate);
+          
+          // Open in new window for printing
+          const printWindow = window.open('', '_blank');
+          printWindow.document.write(htmlContent);
+          printWindow.document.close();
+          
+          // Wait for content to load then trigger print
+          printWindow.onload = () => {
+            printWindow.print();
+          };
+        } else {
+          alert('No data available for the selected period');
         }
+      } else {
+        alert('Failed to fetch data for PDF generation');
       }
     } catch (error) {
       console.error('Error generating PDF:', error);
+      alert('Error generating PDF report');
     }
   };
 
@@ -236,17 +250,7 @@ const CalendarWidget = ({ user }) => {
     `;
   };
 
-  const downloadPDF = (content, filename) => {
-    const blob = new Blob([content], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
+  // Remove the downloadPDF function as we're using print functionality now
 
   const days = getDaysInMonth(currentDate);
 
