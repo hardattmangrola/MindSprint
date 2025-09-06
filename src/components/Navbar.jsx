@@ -99,12 +99,14 @@ const Navbar = ({ onChatClick, onPageChange, currentPage, user, onLogout, showCh
               <div className="text-sm text-gray-700 whitespace-nowrap">
                 Welcome, <span className="font-semibold">{user.name}</span>
               </div>
-              <button 
-                onClick={onLogout}
-                className="text-sm px-3 py-1 rounded-full bg-gradient-to-r from-pink-800 to-pink-500 text-white hover:from-pink-900 hover:to-pink-600 transition"
-              >
-                Logout
-              </button>
+                  <button 
+                    onClick={onLogout}
+                    className="text-sm font-semibold text-red-600 border border-gray-300 px-3 py-1 rounded-full hover:bg-red-600 hover:text-white hover:border-red-600 transition"
+                  >
+                  Logout
+                </button>
+
+
             </div>
           )}
           <FiUser className="text-xl text-gray-700 cursor-pointer hover:text-[#6363ee]" />
@@ -168,17 +170,17 @@ const Navbar = ({ onChatClick, onPageChange, currentPage, user, onLogout, showCh
             )}
           </div>
           {user && (
-            <>
-              <div className="text-sm text-gray-700 border-t pt-2 whitespace-nowrap">
-                Welcome, <span className="font-semibold">{user.name}</span>
-              </div>
-              <button 
-                onClick={onLogout}
-                className="text-sm text-black border-t pt-2 hover:text-[#6363ee]"
-              >
-                Logout
-              </button>
-            </>
+          <div className="flex items-center space-x-2">
+            <div className="text-sm text-gray-700 whitespace-nowrap">
+              Welcome, <span className="font-semibold">{user.name}</span>
+            </div>
+            <button 
+              onClick={onLogout}
+              className="text-sm font-semibold text-red-600 border border-gray-300 px-3 py-1 rounded-full hover:text-red-700 hover:border-red-400 transition"
+            >
+              Logout
+            </button>
+          </div>
           )}
         </div>
       )}
