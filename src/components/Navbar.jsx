@@ -98,9 +98,10 @@ const Navbar = ({ onChatClick, onPageChange, currentPage, user, onLogout, showCh
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => onPageChange('profile')}
-                className="text-sm text-gray-700 hover:text-[#6363ee] transition"
+                className="p-2 text-gray-700 hover:text-[#6363ee] transition rounded-lg hover:bg-gray-100"
+                title="Profile"
               >
-                Profile
+                <FiUser size={20} />
               </button>
               <div className="text-sm text-gray-700 whitespace-nowrap">
                 Welcome, <span className="font-semibold">{user.name}</span>
@@ -113,7 +114,6 @@ const Navbar = ({ onChatClick, onPageChange, currentPage, user, onLogout, showCh
               </button>
             </div>
           )}
-          <FiUser className="text-xl text-gray-700 cursor-pointer hover:text-[#6363ee]" />
         </div>
       )}
 
@@ -173,7 +173,14 @@ const Navbar = ({ onChatClick, onPageChange, currentPage, user, onLogout, showCh
               </button>
             )}
           </div>
-          <button onClick={() => onPageChange('profile')} className="hover:text-[#6363ee] text-sm">Profile</button>
+          <button 
+            onClick={() => onPageChange('profile')} 
+            className="flex items-center space-x-2 hover:text-[#6363ee] text-sm p-2 rounded-lg hover:bg-gray-100"
+            title="Profile"
+          >
+            <FiUser size={16} />
+            <span>Profile</span>
+          </button>
           {user && (
           <div className="flex items-center space-x-2">
             <div className="text-sm text-gray-700 whitespace-nowrap">
