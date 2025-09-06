@@ -351,18 +351,30 @@ const TrackingForm = ({ onClose }) => {
           </div>
 
           {/* Submit Button */}
-          <div className="flex space-x-3 pt-4">
+          <div className="pt-4">
+            {!formData.mood && (
+              <div className="mb-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-800">
+                  <span className="font-medium">⚠️ Please select your mood</span> to enable saving your wellness data.
+                </p>
+              </div>
+            )}
+            <div className="flex space-x-3">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+              className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition font-medium"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || !formData.mood}
-              className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-lg hover:from-purple-700 hover:to-pink-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              className={`flex-1 px-4 py-3 border-gray-300 rounded-lg transition flex items-center justify-center space-x-2 font-medium ${
+                loading || !formData.mood
+                  ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-700 hover:to-pink-600 hover:shadow-lg '
+              }`}
             >
               {loading ? (
                 <>
@@ -371,11 +383,12 @@ const TrackingForm = ({ onClose }) => {
                 </>
               ) : (
                 <>
-                  <Save size={16} />
-                  <span>Save Data</span>
+                  <Save className="text-black border-gray-300" size={16} />
+                  <span className="text-black">Save Data</span>
                 </>
               )}
             </button>
+            </div>
           </div>
         </form>
       </div>
