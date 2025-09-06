@@ -4,7 +4,7 @@ import { GiMeditation } from "react-icons/gi";
 import { FiUser, FiMenu } from "react-icons/fi";
 import { useState } from "react";
 
-const Navbar = ({ onChatClick, onPageChange, currentPage }) => {  // ✅ Accept props
+const Navbar = ({ onChatClick, onPageChange, currentPage, user, onLogout }) => {  // ✅ Accept props
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -49,9 +49,19 @@ const Navbar = ({ onChatClick, onPageChange, currentPage }) => {  // ✅ Accept 
 
       {/* Right Side */}
       <div className="hidden md:flex items-center space-x-4">
-        <button className="text-sm px-3 py-1 rounded-full bg-black text-white hover:bg-[#6363ee] transition">
-          Get Started
-        </button>
+        {user && (
+          <div className="flex items-center space-x-3">
+            <div className="text-sm text-gray-700">
+              Welcome, <span className="font-semibold">{user.name}</span>
+            </div>
+            <button 
+              onClick={onLogout}
+              className="text-sm px-3 py-1 rounded-full bg-red-500 text-white hover:bg-red-600 transition"
+            >
+              Logout
+            </button>
+          </div>
+        )}
         <FiUser className="text-xl text-gray-700 cursor-pointer hover:text-[#6363ee]" />
       </div>
 
@@ -69,9 +79,19 @@ const Navbar = ({ onChatClick, onPageChange, currentPage }) => {  // ✅ Accept 
           <button onClick={() => onPageChange('wellness')} className="hover:text-[#6363ee]">Wellness</button>
           <button onClick={() => onPageChange('mindfulness')} className="hover:text-[#6363ee]">Mindfulness</button>
           <button onClick={onChatClick} className="hover:text-[#6363ee]">AI Chat</button>
-          <button className="text-sm px-4 py-2 rounded-full bg-black text-white hover:bg-yellow-500 hover:text-black transition">
-            Get Started
-          </button>
+          {user && (
+            <>
+              <div className="text-sm text-gray-700 border-t pt-2">
+                Welcome, <span className="font-semibold">{user.name}</span>
+              </div>
+              <button 
+                onClick={onLogout}
+                className="text-sm px-4 py-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition"
+              >
+                Logout
+              </button>
+            </>
+          )}
         </div>
       )}
     </nav>
