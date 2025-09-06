@@ -4,7 +4,7 @@ import { GiMeditation } from "react-icons/gi";
 import { FiUser, FiMenu } from "react-icons/fi";
 import { useState } from "react";
 
-const Navbar = ({ onChatClick }) => {  // ✅ Accept prop
+const Navbar = ({ onChatClick, onPageChange, currentPage }) => {  // ✅ Accept props
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -21,16 +21,21 @@ const Navbar = ({ onChatClick }) => {  // ✅ Accept prop
 
       {/* Desktop Nav */}
       <div className="hidden md:flex items-center space-x-6 text-gray-700 font-medium">
-        <a href="#" className="hover:text-[#6363ee] flex items-center space-x-1">
+        <button 
+          onClick={() => onPageChange('wellness')}
+          className={`hover:text-[#6363ee] flex items-center space-x-1 ${currentPage === 'wellness' ? 'text-[#6363ee]' : ''}`}
+        >
           <FaRegSmileBeam />
           <span>Wellness</span>
-        </a>
-        <a href="#" className="hover:text-[#6363ee] flex items-center space-x-1">
+        </button>
+        <button 
+          onClick={() => onPageChange('mindfulness')}
+          className={`hover:text-[#6363ee] flex items-center space-x-1 ${currentPage === 'mindfulness' ? 'text-[#6363ee]' : ''}`}
+        >
           <GiMeditation />
           <span>Mindfulness</span>
-        </a>
-        <a
-          href="#"
+        </button>
+        <button
           onClick={(e) => {
             e.preventDefault();
             onChatClick();  // ✅ Works now
@@ -39,12 +44,12 @@ const Navbar = ({ onChatClick }) => {  // ✅ Accept prop
         >
           <RiRobot2Line />
           <span>AI Chat</span>
-        </a>
+        </button>
       </div>
 
       {/* Right Side */}
       <div className="hidden md:flex items-center space-x-4">
-        <button className="text-sm px-3 py-1 rounded-full bg-black text-white hover:text-[#6363ee] hover:text-black transition">
+        <button className="text-sm px-3 py-1 rounded-full bg-black text-white hover:bg-[#6363ee] transition">
           Get Started
         </button>
         <FiUser className="text-xl text-gray-700 cursor-pointer hover:text-[#6363ee]" />
@@ -61,9 +66,9 @@ const Navbar = ({ onChatClick }) => {  // ✅ Accept prop
       {/* Mobile Dropdown */}
       {isOpen && (
         <div className="absolute top-14 left-0 w-full bg-white rounded-lg shadow-md py-4 flex flex-col items-center space-y-4 md:hidden">
-          <a href="#" className="hover:text-[#6363ee]">Wellness</a>
-          <a href="#" className="hover:text-[#6363ee]">Mindfulness</a>
-          <a href="#" onClick={onChatClick} className="hover:text-[#6363ee]">AI Chat</a>
+          <button onClick={() => onPageChange('wellness')} className="hover:text-[#6363ee]">Wellness</button>
+          <button onClick={() => onPageChange('mindfulness')} className="hover:text-[#6363ee]">Mindfulness</button>
+          <button onClick={onChatClick} className="hover:text-[#6363ee]">AI Chat</button>
           <button className="text-sm px-4 py-2 rounded-full bg-black text-white hover:bg-yellow-500 hover:text-black transition">
             Get Started
           </button>
