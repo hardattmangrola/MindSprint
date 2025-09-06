@@ -12,18 +12,30 @@ const MindfulMazeMeditation = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [mazeSize, setMazeSize] = useState(8);
+  const [currentLevel, setCurrentLevel] = useState(1);
+  const [maxLevel, setMaxLevel] = useState(5);
+  const [timeLeft, setTimeLeft] = useState(300); // Total time remaining
+  const [totalTime, setTotalTime] = useState(300); // 5 minutes total
+  const [selectedTime, setSelectedTime] = useState(5); // minutes
+  const [isTimeUp, setIsTimeUp] = useState(false);
+  const [levelComplete, setLevelComplete] = useState(false);
+  const [showTimeSelection, setShowTimeSelection] = useState(true);
+  const [gameTimerStarted, setGameTimerStarted] = useState(false);
   
   const intervalRef = useRef(null);
+  const timerRef = useRef(null);
 
-  // Generate a simple maze
-  const generateMaze = (size) => {
+  // Generate a simple maze with increasing difficulty
+  const generateMaze = (size, level) => {
     const newMaze = [];
+    const wallDensity = Math.min(0.1 + (level - 1) * 0.05, 0.4); // Increase wall density with level
+    
     for (let y = 0; y < size; y++) {
       const row = [];
       for (let x = 0; x < size; x++) {
         // Create walls on borders and some random internal walls
         const isWall = (x === 0 || x === size - 1 || y === 0 || y === size - 1) ||
-                      (Math.random() < 0.2 && x > 1 && x < size - 2 && y > 1 && y < size - 2);
+                      (Math.random() < wallDensity && x > 1 && x < size - 2 && y > 1 && y < size - 2);
         row.push({
           x, y,
           isWall,
@@ -38,7 +50,30 @@ const MindfulMazeMeditation = () => {
   };
 
   const initializeGame = () => {
-    const newMaze = generateMaze(mazeSize);
+    setShowTimeSelection(false);
+    setCurrentLevel(1);
+    setScore(0);
+    setGameComplete(false);
+    setGameStarted(true);
+    setSpeed(1);
+    setIsBreathing(false);
+    setBreathingPhase('inhale');
+    setBreathingCount(0);
+    setIsTimeUp(false);
+    setLevelComplete(false);
+    setGameTimerStarted(false);
+    
+    // Set total time based on selection
+    const totalGameTime = selectedTime * 60;
+    setTotalTime(totalGameTime);
+    setTimeLeft(totalGameTime);
+    
+    // Generate first level maze
+    generateLevelMaze(1);
+  };
+
+  const generateLevelMaze = (level) => {
+    const newMaze = generateMaze(mazeSize, level);
     const startPos = { x: 1, y: 1 };
     const endPos = { x: mazeSize - 2, y: mazeSize - 2 };
     
@@ -49,19 +84,38 @@ const MindfulMazeMeditation = () => {
     setMaze(newMaze);
     setPlayerPos(startPos);
     setTargetPos(endPos);
-    setScore(0);
-    setGameComplete(false);
-    setGameStarted(true);
-    setSpeed(1);
-    setIsBreathing(false);
-    setBreathingPhase('inhale');
-    setBreathingCount(0);
+    setLevelComplete(false);
+  };
+
+  const startGameTimer = () => {
+    // Start main game timer (only once when game starts)
+    if (!gameTimerStarted) {
+      setGameTimerStarted(true);
+      timerRef.current = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            setIsTimeUp(true);
+            stopBreathing();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
   };
 
   const startBreathing = () => {
     setIsBreathing(true);
     setBreathingPhase('inhale');
     setBreathingCount(0);
+    
+    // Start game timer if not already started
+    startGameTimer();
+    
+    // Clear any existing breathing interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
     
     // Breathing cycle: inhale 4, hold 4, exhale 4
     const breathingPattern = ['inhale', 'hold', 'exhale'];
@@ -90,10 +144,11 @@ const MindfulMazeMeditation = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
+    // Don't stop the game timer - it should continue running
   };
 
   const movePlayer = (direction) => {
-    if (!gameStarted || gameComplete) return;
+    if (!gameStarted || gameComplete || isTimeUp || !isBreathing) return;
     
     const newPos = { ...playerPos };
     
@@ -120,14 +175,32 @@ const MindfulMazeMeditation = () => {
       
       // Check if reached target
       if (newPos.x === targetPos.x && newPos.y === targetPos.y) {
-        setGameComplete(true);
+        setLevelComplete(true);
         setScore(prev => prev + 1000);
-        stopBreathing();
+        
+        // Check if this was the final level
+        if (currentLevel >= maxLevel) {
+          setGameComplete(true);
+          stopBreathing(); // Only stop breathing when game is completely finished
+        } else {
+          // Move to next level - don't stop breathing, just pause movement
+          setTimeout(() => {
+            nextLevel();
+          }, 2000);
+        }
       } else {
         // Add points for movement
         setScore(prev => prev + 10);
       }
     }
+  };
+
+  const nextLevel = () => {
+    const nextLevelNum = currentLevel + 1;
+    setCurrentLevel(nextLevelNum);
+    setSpeed(1); // Reset speed for new level
+    generateLevelMaze(nextLevelNum);
+    // Timer and breathing continue running - no restart needed!
   };
 
   const handleKeyPress = (e) => {
@@ -168,6 +241,18 @@ const MindfulMazeMeditation = () => {
     }
   }, [isBreathing, playerPos]);
 
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
+
   const getBreathingColor = () => {
     switch (breathingPhase) {
       case 'inhale': return 'from-green-400 to-blue-500';
@@ -191,14 +276,47 @@ const MindfulMazeMeditation = () => {
       <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 max-w-4xl w-full">
         <h2 className="text-3xl font-bold text-white text-center mb-6">Mindful Maze Meditation</h2>
         
-        {!gameStarted && (
+        {showTimeSelection && (
+          <div className="text-center space-y-6">
+            <h3 className="text-2xl font-bold text-white mb-4">Select Game Duration</h3>
+            <p className="text-white/80 mb-6">
+              Choose how long you want to play. You'll have 5 levels to complete!
+            </p>
+            
+            <div className="grid grid-cols-5 gap-4 mb-6">
+              {[1, 2, 3, 4, 5].map((minutes) => (
+                <button
+                  key={minutes}
+                  onClick={() => setSelectedTime(minutes)}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    selectedTime === minutes
+                      ? 'bg-purple-500 border-purple-300 text-white'
+                      : 'bg-white/10 border-white/30 text-white/80 hover:bg-white/20'
+                  }`}
+                >
+                  <div className="text-2xl font-bold">{minutes}</div>
+                  <div className="text-sm">min</div>
+                </button>
+              ))}
+            </div>
+            
+            <button
+              onClick={initializeGame}
+              className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform"
+            >
+              Start {selectedTime}-Minute Journey
+            </button>
+          </div>
+        )}
+
+        {!gameStarted && !showTimeSelection && (
           <div className="text-center space-y-4">
             <p className="text-white/80 mb-6">
               Navigate through the maze while maintaining calm breathing. 
               Your speed increases as you breathe mindfully!
             </p>
             <button
-              onClick={initializeGame}
+              onClick={() => setShowTimeSelection(true)}
               className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform"
             >
               Start Mindful Journey
@@ -206,8 +324,25 @@ const MindfulMazeMeditation = () => {
           </div>
         )}
 
-        {gameStarted && !gameComplete && (
+        {gameStarted && !gameComplete && !isTimeUp && (
           <div className="space-y-6">
+            {/* Level and Timer Display */}
+            <div className="text-center mb-4">
+              <div className="text-3xl font-bold text-white mb-2">Level {currentLevel} of {maxLevel}</div>
+              <div className={`text-2xl font-bold ${timeLeft <= 30 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
+                {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+              </div>
+              <div className="w-full bg-white/20 rounded-full h-3 mt-2">
+                <div 
+                  className={`h-3 rounded-full transition-all duration-1000 ${timeLeft <= 30 ? 'bg-red-400' : 'bg-gradient-to-r from-purple-400 to-indigo-400'}`}
+                  style={{ width: `${(timeLeft / totalTime) * 100}%` }}
+                ></div>
+              </div>
+              <div className="text-sm text-white/60 mt-1">
+                Total Time Remaining
+              </div>
+            </div>
+
             {/* Game Stats */}
             <div className="flex justify-between items-center text-white">
               <div className="text-center">
@@ -278,18 +413,48 @@ const MindfulMazeMeditation = () => {
             <div className="text-center text-white/80">
               <p>Use WASD or Arrow Keys to move. Keep breathing to increase speed!</p>
               <p>Reach the target (🎯) while maintaining mindful breathing.</p>
+              <p className="text-yellow-300 font-semibold">Timer runs continuously - complete all levels before time runs out!</p>
             </div>
+          </div>
+        )}
+
+        {levelComplete && currentLevel < maxLevel && (
+          <div className="text-center space-y-4">
+            <div className="text-6xl mb-4">🎉</div>
+            <h3 className="text-2xl font-bold text-white">Level {currentLevel} Complete!</h3>
+            <p className="text-white/80">Automatically continuing to Level {currentLevel + 1}...</p>
+            <div className="text-white/60 mb-2">
+              Time Remaining: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+            </div>
+            <div className="animate-spin text-4xl">⏳</div>
+          </div>
+        )}
+
+        {isTimeUp && (
+          <div className="text-center space-y-4">
+            <div className="text-6xl mb-4">⏰</div>
+            <h3 className="text-2xl font-bold text-white">Time's Up!</h3>
+            <p className="text-white/80">Final Score: {score}</p>
+            <p className="text-white/80">Levels Completed: {currentLevel - 1}</p>
+            <p className="text-white/80">You reached Level {currentLevel}!</p>
+            <button
+              onClick={() => setShowTimeSelection(true)}
+              className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform"
+            >
+              Try Again
+            </button>
           </div>
         )}
 
         {gameComplete && (
           <div className="text-center space-y-4">
             <div className="text-6xl mb-4">🏆</div>
-            <h3 className="text-2xl font-bold text-white">Mindful Journey Complete!</h3>
+            <h3 className="text-2xl font-bold text-white">All Levels Complete!</h3>
             <p className="text-white/80">Final Score: {score}</p>
-            <p className="text-white/80">You've mastered mindful movement!</p>
+            <p className="text-white/80">You've mastered all 5 levels!</p>
+            <p className="text-white/80">Time Taken: {selectedTime} minutes</p>
             <button
-              onClick={initializeGame}
+              onClick={() => setShowTimeSelection(true)}
               className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform"
             >
               Play Again
