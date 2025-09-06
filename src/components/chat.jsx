@@ -1,32 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Sparkles, Heart, Brain, Target, Zap } from 'lucide-react';
-
-// Mock backend hook for demo purposes
-const useBackend = () => ({
-  sendMessage: async (message) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return {
-      text: "Thank you for sharing that with me. I'm here to support you on your wellness journey. How would you like to explore this further?",
-      moodEmoji: "🌟"
-    };
-  },
-  isLoading: false,
-  error: null,
-  getWellnessCheckIn: () => "How are you feeling today? Let's do a quick wellness check-in.",
-  getMindfulnessExercise: () => ({
-    title: "Breathing Exercise",
-    description: "A simple 5-minute breathing technique to center yourself."
-  }),
-  currentMood: { state: 'Supportive' },
-  moodEmoji: "🤗",
-  mentorName: "Aria"
-});
+import { useBackend } from './backend';
 
 const Chat = ({ onClose }) => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hello! I'm Aria, your mental wellness mentor. I'm here to support you with daily check-ins, mindfulness exercises, and emotional guidance. How are you feeling today?",
+      text: "Hello! I'm Synthia, your mental wellness mentor. I'm here to support you with daily check-ins, mindfulness exercises, and emotional guidance. How are you feeling today?",
       isBot: true,
       timestamp: new Date(),
       mood: null,
