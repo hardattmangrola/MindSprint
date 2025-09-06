@@ -9,9 +9,8 @@ const Navbar = ({ onChatClick, onPageChange, currentPage, user, onLogout }) => {
 
   return (
     <nav
-      className="fixed top-4 left-1/2 transform -translate-x-1/2 
-      bg-white/90 backdrop-blur-md rounded-full shadow-md 
-      px-6 py-2 flex items-center justify-center gap-8 w-auto transition-all z-50"
+      className="bg-white/90 backdrop-blur-md rounded-full shadow-md 
+      px-6 py-2 flex items-center justify-center gap-6 w-auto transition-all"
     >
       {/* Logo */}
       <div className="flex items-center text-black font-bold text-xl cursor-pointer hover:text-[#6363ee] transition">
@@ -20,7 +19,7 @@ const Navbar = ({ onChatClick, onPageChange, currentPage, user, onLogout }) => {
       </div>
 
       {/* Desktop Nav */}
-      <div className="hidden md:flex items-center space-x-6 text-gray-700 font-medium">
+      <div className="hidden md:flex items-center space-x-4 text-gray-700 font-medium">
         <button 
           onClick={() => onPageChange('wellness')}
           className={`hover:text-[#6363ee] flex items-center space-x-1 ${currentPage === 'wellness' ? 'text-[#6363ee]' : ''}`}
@@ -38,7 +37,7 @@ const Navbar = ({ onChatClick, onPageChange, currentPage, user, onLogout }) => {
         <button
           onClick={(e) => {
             e.preventDefault();
-            onChatClick();  // ✅ Works now
+            onChatClick();
           }}
           className="hover:text-[#6363ee] flex items-center space-x-1"
         >
@@ -48,15 +47,15 @@ const Navbar = ({ onChatClick, onPageChange, currentPage, user, onLogout }) => {
       </div>
 
       {/* Right Side */}
-      <div className="hidden md:flex items-center space-x-4">
+      <div className="hidden md:flex items-center space-x-3">
         {user && (
-          <div className="flex items-center space-x-3">
-            <div className="text-sm text-gray-700">
+          <div className="flex items-center space-x-2">
+            <div className="text-sm text-gray-700 whitespace-nowrap">
               Welcome, <span className="font-semibold">{user.name}</span>
             </div>
             <button 
               onClick={onLogout}
-              className="text-sm px-3 py-1 rounded-full bg-red-500 text-white hover:bg-red-600 transition"
+              className="text-sm px-3 py-1 rounded-full bg-pink-500 text-white hover:bg-pink-600 transition"
             >
               Logout
             </button>
@@ -75,18 +74,18 @@ const Navbar = ({ onChatClick, onPageChange, currentPage, user, onLogout }) => {
 
       {/* Mobile Dropdown */}
       {isOpen && (
-        <div className="absolute top-14 left-0 w-full bg-white rounded-lg shadow-md py-4 flex flex-col items-center space-y-4 md:hidden">
-          <button onClick={() => onPageChange('wellness')} className="hover:text-[#6363ee]">Wellness</button>
-          <button onClick={() => onPageChange('mindfulness')} className="hover:text-[#6363ee]">Mindfulness</button>
-          <button onClick={onChatClick} className="hover:text-[#6363ee]">AI Chat</button>
+        <div className="absolute top-12 left-0 w-full bg-white rounded-lg shadow-md py-3 flex flex-col items-center space-y-3 md:hidden">
+          <button onClick={() => onPageChange('wellness')} className="hover:text-[#6363ee] text-sm">Wellness</button>
+          <button onClick={() => onPageChange('mindfulness')} className="hover:text-[#6363ee] text-sm">Mindfulness</button>
+          <button onClick={onChatClick} className="hover:text-[#6363ee] text-sm">AI Chat</button>
           {user && (
             <>
-              <div className="text-sm text-gray-700 border-t pt-2">
+              <div className="text-sm text-gray-700 border-t pt-2 whitespace-nowrap">
                 Welcome, <span className="font-semibold">{user.name}</span>
               </div>
               <button 
                 onClick={onLogout}
-                className="text-sm px-4 py-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition"
+                className="text-sm px-4 py-2 rounded-full bg-pink-500 text-white hover:bg-pink-600 transition"
               >
                 Logout
               </button>

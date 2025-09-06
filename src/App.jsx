@@ -86,25 +86,23 @@ const App = () => {
         <Spline scene="https://prod.spline.design/tIFQ1NG8DRCjU1Wd/scene.splinecode" />
       </div>
 
-      {/* YouTube-style Navbar Container */}
+      {/* Navbar Container */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/70 to-transparent py-3">
-        <div className="flex justify-center items-center w-full px-4">
-          <div className="w-full max-w-3xl">
-            <Navbar 
-              onPageChange={handlePageChange} 
-              currentPage={currentPage} 
-              onChatClick={() => setShowChat(!showChat)}
-              user={user}
-              onLogout={handleLogout}
-            />
-          </div>
+        <div className="flex justify-center items-center w-full">
+          <Navbar 
+            onPageChange={handlePageChange} 
+            currentPage={currentPage} 
+            onChatClick={() => setShowChat(!showChat)}
+            user={user}
+            onLogout={handleLogout}
+          />
         </div>
       </div>
 
       {/* Page Content */}
       {currentPage === 'home' && (
         <div className="flex flex-1 items-center justify-center h-full pt-16">
-          <h1 className="text-4xl font-bold text-gray-200 drop-shadow-lg">
+          <h1 className="text-4xl font-bold text-gray-200 drop-shadow-lg whitespace-nowrap">
             Hello, {user?.name || 'User'}!
           </h1>
         </div>
