@@ -7,11 +7,22 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "backend": "node backend/server.js",
+    "backend:dev": "nodemon backend/server.js",
+    "dev:full": "concurrently \"npm run dev\" \"npm run backend:dev\""
   },
   "dependencies": {
+    "@google-cloud/local-auth": "^3.0.1",
     "@splinetool/react-spline": "^4.1.0",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "google-auth-library": "^10.3.0",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.542.0",
+    "mongoose": "^8.18.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-icons": "^5.5.0"
@@ -23,10 +34,12 @@
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^8.2.2",
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
+    "nodemon": "^3.0.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.13",
     "vite": "^7.1.4"
