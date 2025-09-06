@@ -60,6 +60,71 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+// User Tracking Schema for daily mood, wellness, energy, stress data
+const userTrackingSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  date: {
+    type: Date,
+    required: true,
+    default: Date.now
+  },
+  mood: {
+    type: String,
+    enum: ['very_happy', 'happy', 'neutral', 'sad', 'very_sad'],
+    required: true
+  },
+  moodScore: {
+    type: Number,
+    min: 1,
+    max: 10,
+    required: true
+  },
+  energy: {
+    type: Number,
+    min: 1,
+    max: 10,
+    required: true
+  },
+  stress: {
+    type: Number,
+    min: 1,
+    max: 10,
+    required: true
+  },
+  wellness: {
+    type: Number,
+    min: 1,
+    max: 10,
+    required: true
+  },
+  notes: {
+    type: String,
+    maxlength: 500
+  },
+  activities: [{
+    type: String,
+    enum: ['exercise', 'meditation', 'reading', 'social', 'work', 'rest', 'hobby', 'other']
+  }],
+  sleepHours: {
+    type: Number,
+    min: 0,
+    max: 24
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// Ensure one entry per user per day
+userTrackingSchema.index({ userId: 1, date: 1 }, { unique: true });
+
+const UserTracking = mongoose.model('UserTracking', userTrackingSchema);
+
 // JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
@@ -239,6 +304,176 @@ app.put('/api/auth/profile', authenticateToken, async (req, res) => {
     });
   } catch (error) {
     console.error('Profile update error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// User Tracking Endpoints
+
+// Submit daily tracking data
+app.post('/api/tracking/submit', authenticateToken, async (req, res) => {
+  try {
+    const { mood, moodScore, energy, stress, wellness, notes, activities, sleepHours, date } = req.body;
+    
+    // Validate required fields
+    if (!mood || !moodScore || !energy || !stress || !wellness) {
+      return res.status(400).json({ message: 'All tracking fields are required' });
+    }
+
+    // Use provided date or today's date
+    const trackingDate = date ? new Date(date) : new Date();
+    trackingDate.setHours(0, 0, 0, 0); // Start of day
+
+    // Check if entry already exists for this date
+    const existingEntry = await UserTracking.findOne({
+      userId: req.user.userId,
+      date: trackingDate
+    });
+
+    const trackingData = {
+      userId: req.user.userId,
+      date: trackingDate,
+      mood,
+      moodScore: parseInt(moodScore),
+      energy: parseInt(energy),
+      stress: parseInt(stress),
+      wellness: parseInt(wellness),
+      notes: notes || '',
+      activities: activities || [],
+      sleepHours: sleepHours ? parseFloat(sleepHours) : null
+    };
+
+    let result;
+    if (existingEntry) {
+      // Update existing entry
+      result = await UserTracking.findByIdAndUpdate(
+        existingEntry._id,
+        trackingData,
+        { new: true }
+      );
+    } else {
+      // Create new entry
+      result = await UserTracking.create(trackingData);
+    }
+
+    res.json({
+      message: 'Tracking data saved successfully',
+      data: result
+    });
+  } catch (error) {
+    console.error('Tracking submission error:', error);
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'Entry already exists for this date' });
+    }
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Get tracking data for a specific date range
+app.get('/api/tracking/data', authenticateToken, async (req, res) => {
+  try {
+    const { startDate, endDate, limit = 30 } = req.query;
+    
+    let query = { userId: req.user.userId };
+    
+    if (startDate && endDate) {
+      query.date = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate)
+      };
+    }
+
+    const data = await UserTracking.find(query)
+      .sort({ date: -1 })
+      .limit(parseInt(limit));
+
+    res.json({ data });
+  } catch (error) {
+    console.error('Get tracking data error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Get tracking data for calendar widget (last 30 days)
+app.get('/api/tracking/calendar', authenticateToken, async (req, res) => {
+  try {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const data = await UserTracking.find({
+      userId: req.user.userId,
+      date: { $gte: thirtyDaysAgo }
+    }).sort({ date: 1 });
+
+    // Format data for calendar widget
+    const calendarData = data.map(entry => ({
+      date: entry.date.toISOString().split('T')[0],
+      mood: entry.mood,
+      moodScore: entry.moodScore,
+      energy: entry.energy,
+      stress: entry.stress,
+      wellness: entry.wellness,
+      hasData: true
+    }));
+
+    res.json({ data: calendarData });
+  } catch (error) {
+    console.error('Get calendar data error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Get statistics for PDF report
+app.get('/api/tracking/statistics', authenticateToken, async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    
+    let query = { userId: req.user.userId };
+    
+    if (startDate && endDate) {
+      query.date = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate)
+      };
+    }
+
+    const data = await UserTracking.find(query).sort({ date: 1 });
+    
+    if (data.length === 0) {
+      return res.json({ 
+        message: 'No data found for the specified period',
+        statistics: null 
+      });
+    }
+
+    // Calculate statistics
+    const stats = {
+      totalDays: data.length,
+      averageMood: data.reduce((sum, entry) => sum + entry.moodScore, 0) / data.length,
+      averageEnergy: data.reduce((sum, entry) => sum + entry.energy, 0) / data.length,
+      averageStress: data.reduce((sum, entry) => sum + entry.stress, 0) / data.length,
+      averageWellness: data.reduce((sum, entry) => sum + entry.wellness, 0) / data.length,
+      moodDistribution: {
+        very_happy: data.filter(entry => entry.mood === 'very_happy').length,
+        happy: data.filter(entry => entry.mood === 'happy').length,
+        neutral: data.filter(entry => entry.mood === 'neutral').length,
+        sad: data.filter(entry => entry.mood === 'sad').length,
+        very_sad: data.filter(entry => entry.mood === 'very_sad').length
+      },
+      bestDay: data.reduce((best, current) => 
+        (current.moodScore + current.energy + current.wellness - current.stress) > 
+        (best.moodScore + best.energy + best.wellness - best.stress) ? current : best
+      ),
+      worstDay: data.reduce((worst, current) => 
+        (current.moodScore + current.energy + current.wellness - current.stress) < 
+        (worst.moodScore + worst.energy + worst.wellness - worst.stress) ? current : worst
+      ),
+      data: data
+    };
+
+    res.json({ statistics: stats });
+  } catch (error) {
+    console.error('Get statistics error:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });

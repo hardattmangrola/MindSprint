@@ -4,6 +4,7 @@ import Spline from "@splinetool/react-spline";
 import Chat from "./components/chat";
 import Wellness from "./components/wellness";
 import Mindfulness from "./components/mindfullness";
+import Profile from "./components/Profile";
 import Login from "./Login";
 
 
@@ -111,6 +112,7 @@ const App = () => {
       
       {currentPage === 'wellness' && <Wellness />}
       {currentPage === 'mindfulness' && <Mindfulness />}
+      {currentPage === 'profile' && <Profile user={user} onLogout={handleLogout} />}
 
       {/* Floating Chat Button */}
       <button

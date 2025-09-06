@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import TrackingForm from './TrackingForm';
 
 const Wellness = () => {
   const [currentActivity, setCurrentActivity] = useState(null);
@@ -6,6 +7,7 @@ const Wellness = () => {
   const [energy, setEnergy] = useState(5);
   const [stress, setStress] = useState(5);
   const [wellnessScore, setWellnessScore] = useState(0);
+  const [showTrackingForm, setShowTrackingForm] = useState(false);
 
   const wellnessActivities = [
     {
@@ -268,9 +270,24 @@ const Wellness = () => {
           ))}
         </div>
 
+        {/* Daily Tracking Button */}
+        <div className="text-center mt-8">
+          <button
+            onClick={() => setShowTrackingForm(true)}
+            className="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-purple-700 hover:to-pink-600 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105"
+          >
+            📊 Track Daily Wellness
+          </button>
+        </div>
+
         {/* Instructions */}
         
       </div>
+
+      {/* Tracking Form Modal */}
+      {showTrackingForm && (
+        <TrackingForm onClose={() => setShowTrackingForm(false)} />
+      )}
     </div>
   );
 };
