@@ -269,29 +269,7 @@ const Wellness = () => {
         </div>
 
         {/* Instructions */}
-        <div className="mt-12 text-center">
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-white mb-4">Wellness Tracking</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-white/80">
-              <div className="text-left">
-                <p className="font-semibold mb-2">📊 Track Daily</p>
-                <p className="text-sm">Monitor your mood, energy, and stress levels</p>
-              </div>
-              <div className="text-left">
-                <p className="font-semibold mb-2">🎯 Set Goals</p>
-                <p className="text-sm">Work towards better wellness habits</p>
-              </div>
-              <div className="text-left">
-                <p className="font-semibold mb-2">📈 See Progress</p>
-                <p className="text-sm">Track improvements over time</p>
-              </div>
-              <div className="text-left">
-                <p className="font-semibold mb-2">💡 Get Tips</p>
-                <p className="text-sm">Receive personalized wellness advice</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        
       </div>
     </div>
   );
