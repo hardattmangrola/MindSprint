@@ -1,0 +1,557 @@
+MINDSPRINT PROJECT ARCHITECTURE DIAGRAM
+==========================================
+
+OVERVIEW
+--------
+MindSprint is a mental wellness and mindfulness application with a React frontend, Node.js/Express backend, and MongoDB database. It features an AI-powered chat mentor, wellness tracking, mindfulness games, and user authentication.
+
+ARCHITECTURE LAYERS
+===================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                        CLIENT LAYER                            │
+├─────────────────────────────────────────────────────────────────┤
+│  Frontend (React + Vite)                                       │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                    USER INTERFACE                       │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐      │   │
+│  │  │   Login     │ │   Navbar    │ │   Profile   │      │   │
+│  │  │ Component   │ │ Component   │ │ Component   │      │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘      │   │
+│  │                                                         │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐      │   │
+│  │  │    Chat     │ │  Wellness   │ │Mindfulness  │      │   │
+│  │  │ Component   │ │ Component   │ │ Component   │      │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘      │   │
+│  │                                                         │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐      │   │
+│  │  │TrackingForm │ │CalendarWidget│ │   Games     │      │   │
+│  │  │ Component   │ │ Component   │ │ Components  │      │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘      │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                  STATE MANAGEMENT                       │   │
+│  │  • React Hooks (useState, useEffect)                   │   │
+│  │  • Local Storage (Authentication tokens)               │   │
+│  │  • Context API (User state, Chat state)                │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                    STYLING                              │   │
+│  │  • Tailwind CSS (Utility-first styling)                │   │
+│  │  • Custom gradients and animations                      │   │
+│  │  • Responsive design                                    │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                │ HTTP/HTTPS Requests
+                                │ (REST API calls)
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      API LAYER                                 │
+├─────────────────────────────────────────────────────────────────┤
+│  Backend (Node.js + Express)                                   │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                  SERVER.JS                              │   │
+│  │  • Express server setup                                │   │
+│  │  • CORS configuration                                  │   │
+│  │  • Middleware setup                                    │   │
+│  │  • Route handlers                                      │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                  API ENDPOINTS                          │   │
+│  │  ┌─────────────────────────────────────────────────┐   │   │
+│  │  │              AUTHENTICATION                      │   │   │
+│  │  │  POST /api/auth/register                         │   │   │
+│  │  │  POST /api/auth/login                            │   │   │
+│  │  │  GET  /api/auth/profile                          │   │   │
+│  │  │  PUT  /api/auth/profile                          │   │   │
+│  │  └─────────────────────────────────────────────────┘   │   │
+│  │                                                         │   │
+│  │  ┌─────────────────────────────────────────────────┐   │   │
+│  │  │                TRACKING                         │   │   │
+│  │  │  POST /api/tracking/submit                       │   │   │
+│  │  │  GET  /api/tracking/data                         │   │   │
+│  │  │  GET  /api/tracking/calendar                     │   │   │
+│  │  │  GET  /api/tracking/statistics                   │   │   │
+│  │  │  POST /api/tracking/dummy-data                   │   │   │
+│  │  └─────────────────────────────────────────────────┘   │   │
+│  │                                                         │   │
+│  │  ┌─────────────────────────────────────────────────┐   │   │
+│  │  │                 HEALTH                          │   │   │
+│  │  │  GET  /api/health                               │   │   │
+│  │  └─────────────────────────────────────────────────┘   │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                  MIDDLEWARE                            │   │
+│  │  • JWT Authentication                                  │   │
+│  │  • Password hashing (bcrypt)                           │   │
+│  │  • Request validation                                  │   │
+│  │  • Error handling                                      │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                │ Database Operations
+                                │ (MongoDB Queries)
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    DATA LAYER                                  │
+├─────────────────────────────────────────────────────────────────┤
+│  Database (MongoDB)                                            │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                  COLLECTIONS                            │   │
+│  │  ┌─────────────────────────────────────────────────┐   │   │
+│  │  │                   USERS                          │   │   │
+│  │  │  • _id (ObjectId)                               │   │   │
+│  │  │  • name (String)                                │   │   │
+│  │  │  • email (String, unique)                       │   │   │
+│  │  │  • password (String, hashed)                    │   │   │
+│  │  │  • avatar (String)                              │   │   │
+│  │  │  • createdAt (Date)                             │   │   │
+│  │  │  • lastLogin (Date)                             │   │   │
+│  │  └─────────────────────────────────────────────────┘   │   │
+│  │                                                         │   │
+│  │  ┌─────────────────────────────────────────────────┐   │   │
+│  │  │              USER TRACKING                       │   │   │
+│  │  │  • _id (ObjectId)                               │   │   │
+│  │  │  • userId (ObjectId, ref: User)                 │   │   │
+│  │  │  • date (Date)                                  │   │   │
+│  │  │  • mood (String, enum)                          │   │   │
+│  │  │  • moodScore (Number, 1-10)                     │   │   │
+│  │  │  • energy (Number, 1-10)                        │   │   │
+│  │  │  • stress (Number, 1-10)                        │   │   │
+│  │  │  • wellness (Number, 1-10)                      │   │   │
+│  │  │  • notes (String, max 500)                      │   │   │
+│  │  │  • activities (Array)                           │   │   │
+│  │  │  • sleepHours (Number)                          │   │   │
+│  │  │  • createdAt (Date)                             │   │   │
+│  │  └─────────────────────────────────────────────────┘   │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+
+EXTERNAL SERVICES
+=================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    AI SERVICES                                  │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                GOOGLE GEMINI API                        │   │
+│  │  • Model: gemini-1.5-flash                             │   │
+│  │  • Purpose: AI Chat Mentor (Synthia)                   │   │
+│  │  • Features:                                           │   │
+│  │    - Dynamic personality based on JSON configs         │   │
+│  │    - Mood tracking and adaptation                      │   │
+│  │    - Wellness check-ins and guidance                   │   │
+│  │    - Mindfulness exercise suggestions                  │   │
+│  │    - Emotional support and validation                  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                   3D VISUALIZATION                             │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                  SPLINE 3D                              │   │
+│  │  • 3D background scenes                                 │   │
+│  │  • Interactive 3D elements                              │   │
+│  │  • React integration (@splinetool/react-spline)        │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+
+CONFIGURATION FILES
+===================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    BACKEND CONFIGS                             │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                  JSON CONFIGURATIONS                    │   │
+│  │  • identity.json - Mentor identity and details          │   │
+│  │  • mood.json - AI mood states and emotional data       │   │
+│  │  • objective.json - Conversation objectives            │   │
+│  │  • personality.json - AI personality traits            │   │
+│  │  • relationship.json - User-AI relationship settings   │   │
+│  │  • mentor_details.json - Detailed mentor information   │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    FRONTEND CONFIGS                            │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                  BUILD CONFIGURATIONS                   │   │
+│  │  • vite.config.js - Vite build configuration           │   │
+│  │  • tailwind.config.js - Tailwind CSS configuration     │   │
+│  │  • postcss.config.js - PostCSS configuration           │   │
+│  │  • eslint.config.js - ESLint configuration             │   │
+│  │  • package.json - Dependencies and scripts             │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+
+COMPONENT ARCHITECTURE
+======================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    REACT COMPONENTS                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  App.jsx (Main Application)                                    │
+│  ├── Authentication State Management                           │
+│  ├── Page Routing (Home, Wellness, Mindfulness, Profile)      │
+│  ├── Chat Widget Integration                                   │
+│  └── Spline 3D Background                                      │
+│                                                                 │
+│  ├── components/                                               │
+│  │   ├── Navbar.jsx - Navigation and user controls            │
+│  │   ├── Login.jsx - Authentication form                      │
+│  │   ├── Profile.jsx - User profile management                │
+│  │   ├── chat.jsx - AI chat interface                         │
+│  │   ├── wellness.jsx - Wellness tracking hub                 │
+│  │   ├── mindfullness.jsx - Mindfulness games hub             │
+│  │   ├── TrackingForm.jsx - Daily wellness data entry         │
+│  │   ├── CalendarWidget.jsx - Wellness data visualization     │
+│  │   ├── backend.jsx - AI integration and chat logic          │
+│  │   └── games/                                               │
+│  │       ├── BreathingPatternPuzzle.jsx                       │
+│  │       ├── EmotionColorMatching.jsx                         │
+│  │       ├── GratitudeMemoryTiles.jsx                         │
+│  │       └── MindfulMazeMeditation.jsx                        │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+DATA FLOW
+=========
+
+┌─────────────────────────────────────────────────────────────────┐
+│                        USER INTERACTION                        │
+│                                                                 │
+│  1. User opens application                                     │
+│     ↓                                                          │
+│  2. Authentication check (localStorage)                       │
+│     ↓                                                          │
+│  3. If not authenticated → Login component                     │
+│     ↓                                                          │
+│  4. If authenticated → Main app with navigation               │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      WELLNESS TRACKING                         │
+│                                                                 │
+│  1. User clicks "Track Daily Wellness"                        │
+│     ↓                                                          │
+│  2. TrackingForm component opens                               │
+│     ↓                                                          │
+│  3. User fills mood, energy, stress, wellness data            │
+│     ↓                                                          │
+│  4. Form submits to /api/tracking/submit                      │
+│     ↓                                                          │
+│  5. Backend validates and saves to MongoDB                    │
+│     ↓                                                          │
+│  6. Success confirmation displayed                             │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                        AI CHAT FLOW                            │
+│                                                                 │
+│  1. User clicks chat button                                    │
+│     ↓                                                          │
+│  2. Chat component loads with AI mentor (Synthia)             │
+│     ↓                                                          │
+│  3. User types message                                         │
+│     ↓                                                          │
+│  4. Message sent to backend.jsx                                │
+│     ↓                                                          │
+│  5. AI mood and objectives updated                             │
+│     ↓                                                          │
+│  6. Request sent to Google Gemini API                          │
+│     ↓                                                          │
+│  7. AI response generated with personality                     │
+│     ↓                                                          │
+│  8. Response displayed in chat interface                       │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+SECURITY FEATURES
+=================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    SECURITY IMPLEMENTATION                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  • JWT Token Authentication                                    │
+│    - 7-day expiration                                          │
+│    - Secure token storage in localStorage                      │
+│    - Automatic token validation on API calls                   │
+│                                                                 │
+│  • Password Security                                           │
+│    - bcrypt hashing with 12 salt rounds                        │
+│    - Minimum 6 character requirement                           │
+│    - Password validation on registration                       │
+│                                                                 │
+│  • API Security                                                │
+│    - CORS configuration for specific origins                   │
+│    - Request validation and sanitization                       │
+│    - Error handling without sensitive data exposure            │
+│                                                                 │
+│  • Data Protection                                             │
+│    - User data encryption in transit (HTTPS)                  │
+│    - Secure MongoDB connection                                 │
+│    - Input validation and sanitization                         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+DEPLOYMENT ARCHITECTURE
+=======================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    DEVELOPMENT SETUP                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Frontend Development:                                         │
+│  • Vite dev server (localhost:5173)                           │
+│  • Hot module replacement                                      │
+│  • ESLint for code quality                                     │
+│                                                                 │
+│  Backend Development:                                          │
+│  • Node.js server (localhost:5000)                            │
+│  • Nodemon for auto-restart                                    │
+│  • MongoDB local/cloud connection                              │
+│                                                                 │
+│  Concurrent Development:                                       │
+│  • npm run dev:full (runs both frontend and backend)          │
+│  • Proxy configuration for API calls                           │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+TECHNOLOGY STACK
+================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    FRONTEND TECHNOLOGIES                       │
+├─────────────────────────────────────────────────────────────────┤
+│  • React 19.1.1 - UI framework                                │
+│  • Vite 7.1.4 - Build tool and dev server                     │
+│  • Tailwind CSS 4.1.13 - Styling framework                    │
+│  • Lucide React - Icon library                                │
+│  • React Icons - Additional icons                             │
+│  • Spline React - 3D visualization                            │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    BACKEND TECHNOLOGIES                        │
+├─────────────────────────────────────────────────────────────────┤
+│  • Node.js - Runtime environment                               │
+│  • Express 5.1.0 - Web framework                              │
+│  • MongoDB 8.18.0 - Database                                  │
+│  • Mongoose - MongoDB ODM                                      │
+│  • JWT - Authentication tokens                                 │
+│  • bcryptjs - Password hashing                                 │
+│  • CORS - Cross-origin resource sharing                       │
+│  • dotenv - Environment variables                              │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    EXTERNAL SERVICES                           │
+├─────────────────────────────────────────────────────────────────┤
+│  • Google Gemini API - AI chat functionality                   │
+│  • Spline 3D - Interactive 3D backgrounds                      │
+│  • MongoDB Atlas (optional) - Cloud database                   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+FEATURE BREAKDOWN
+=================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    CORE FEATURES                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  1. USER AUTHENTICATION                                        │
+│     • Registration with email/password                         │
+│     • Login with JWT tokens                                    │
+│     • Profile management                                       │
+│     • Secure session handling                                  │
+│                                                                 │
+│  2. WELLNESS TRACKING                                          │
+│     • Daily mood tracking (5-point scale)                      │
+│     • Energy level monitoring (1-10 scale)                     │
+│     • Stress level assessment (1-10 scale)                     │
+│     • Overall wellness scoring (1-10 scale)                    │
+│     • Activity logging (exercise, meditation, etc.)            │
+│     • Sleep hours tracking                                     │
+│     • Notes and observations                                   │
+│     • Calendar visualization                                   │
+│     • Statistics and analytics                                 │
+│                                                                 │
+│  3. AI MENTOR CHAT                                             │
+│     • Personalized AI mentor (Synthia)                        │
+│     • Dynamic personality based on JSON configs                │
+│     • Mood-aware responses                                     │
+│     • Wellness check-in prompts                               │
+│     • Mindfulness exercise guidance                            │
+│     • Emotional support and validation                         │
+│     • Conversation history tracking                            │
+│                                                                 │
+│  4. MINDFULNESS GAMES                                          │
+│     • Breathing Pattern Puzzle                                 │
+│     • Emotion Color Matching                                   │
+│     • Gratitude Memory Tiles                                   │
+│     • Mindful Maze Meditation                                  │
+│     • Score tracking and progress                              │
+│                                                                 │
+│  5. DATA VISUALIZATION                                         │
+│     • Calendar widget for wellness data                        │
+│     • Statistics dashboard                                     │
+│     • Progress tracking                                        │
+│     • PDF report generation (planned)                          │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+API ENDPOINTS DETAIL
+====================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    AUTHENTICATION ENDPOINTS                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  POST /api/auth/register                                       │
+│  ├── Body: { name, email, password }                          │
+│  ├── Response: { token, user }                                │
+│  └── Features: Email validation, password hashing              │
+│                                                                 │
+│  POST /api/auth/login                                          │
+│  ├── Body: { email, password }                                │
+│  ├── Response: { token, user }                                │
+│  └── Features: Password verification, JWT generation           │
+│                                                                 │
+│  GET /api/auth/profile                                         │
+│  ├── Headers: Authorization: Bearer <token>                   │
+│  ├── Response: { user }                                        │
+│  └── Features: Token validation, user data retrieval          │
+│                                                                 │
+│  PUT /api/auth/profile                                         │
+│  ├── Headers: Authorization: Bearer <token>                   │
+│  ├── Body: { name, avatar }                                   │
+│  ├── Response: { user }                                        │
+│  └── Features: Profile updates, data validation               │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    TRACKING ENDPOINTS                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  POST /api/tracking/submit                                     │
+│  ├── Headers: Authorization: Bearer <token>                   │
+│  ├── Body: { mood, moodScore, energy, stress, wellness,       │
+│  │          notes, activities, sleepHours, date }             │
+│  ├── Response: { message, data }                              │
+│  └── Features: Data validation, upsert logic                  │
+│                                                                 │
+│  GET /api/tracking/data                                        │
+│  ├── Headers: Authorization: Bearer <token>                   │
+│  ├── Query: { startDate, endDate, limit }                     │
+│  ├── Response: { data }                                        │
+│  └── Features: Date range filtering, pagination               │
+│                                                                 │
+│  GET /api/tracking/calendar                                    │
+│  ├── Headers: Authorization: Bearer <token>                   │
+│  ├── Response: { data } (last 30 days)                        │
+│  └── Features: Calendar widget data formatting                │
+│                                                                 │
+│  GET /api/tracking/statistics                                  │
+│  ├── Headers: Authorization: Bearer <token>                   │
+│  ├── Query: { startDate, endDate }                            │
+│  ├── Response: { statistics }                                 │
+│  └── Features: Analytics calculation, trend analysis          │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+DEVELOPMENT WORKFLOW
+====================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    DEVELOPMENT COMMANDS                        │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Frontend Development:                                         │
+│  • npm run dev - Start Vite dev server                        │
+│  • npm run build - Build for production                       │
+│  • npm run preview - Preview production build                  │
+│  • npm run lint - Run ESLint                                  │
+│                                                                 │
+│  Backend Development:                                          │
+│  • npm run backend - Start Node.js server                     │
+│  • npm run backend:dev - Start with nodemon                   │
+│                                                                 │
+│  Full Stack Development:                                       │
+│  • npm run dev:full - Run both frontend and backend           │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+FILE STRUCTURE
+==============
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    PROJECT STRUCTURE                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  MindSprint/                                                   │
+│  ├── src/                                                      │
+│  │   ├── App.jsx - Main application component                  │
+│  │   ├── Login.jsx - Authentication component                  │
+│  │   ├── main.jsx - Application entry point                   │
+│  │   ├── index.css - Global styles                            │
+│  │   ├── App.css - Component styles                           │
+│  │   └── components/                                           │
+│  │       ├── Navbar.jsx - Navigation component                 │
+│  │       ├── Profile.jsx - User profile component              │
+│  │       ├── chat.jsx - AI chat interface                     │
+│  │       ├── wellness.jsx - Wellness tracking hub              │
+│  │       ├── mindfullness.jsx - Mindfulness games hub          │
+│  │       ├── TrackingForm.jsx - Daily tracking form            │
+│  │       ├── CalendarWidget.jsx - Calendar visualization       │
+│  │       ├── backend.jsx - AI integration logic                │
+│  │       └── games/                                            │
+│  │           ├── BreathingPatternPuzzle.jsx                    │
+│  │           ├── EmotionColorMatching.jsx                      │
+│  │           ├── GratitudeMemoryTiles.jsx                      │
+│  │           └── MindfulMazeMeditation.jsx                     │
+│  │                                                             │
+│  ├── backend/                                                  │
+│  │   ├── server.js - Main server file                         │
+│  │   ├── server-simple.js - Simplified server                 │
+│  │   ├── database.jsx - Database utilities                    │
+│  │   ├── identity.json - AI mentor identity                   │
+│  │   ├── mood.json - AI mood configuration                    │
+│  │   ├── objective.json - Conversation objectives             │
+│  │   ├── personality.json - AI personality traits             │
+│  │   ├── relationship.json - User-AI relationship             │
+│  │   └── mentor_details.json - Detailed mentor info           │
+│  │                                                             │
+│  ├── public/                                                   │
+│  │   └── vite.svg - Vite logo                                 │
+│  │                                                             │
+│  ├── package.json - Dependencies and scripts                  │
+│  ├── vite.config.js - Vite configuration                      │
+│  ├── tailwind.config.js - Tailwind configuration              │
+│  ├── postcss.config.js - PostCSS configuration                │
+│  ├── eslint.config.js - ESLint configuration                  │
+│  ├── index.html - HTML entry point                            │
+│  ├── README.md - Project documentation                        │
+│  ├── SETUP.md - Setup instructions                            │
+│  └── HOST.md - Hosting instructions                           │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+This architecture provides a comprehensive mental wellness platform with AI-powered guidance, comprehensive tracking capabilities, and engaging mindfulness activities, all built with modern web technologies and best practices for security and user experience.
