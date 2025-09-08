@@ -8,7 +8,8 @@ MindSprint is designed to help users track their daily wellness metrics, engage 
 ## Project Demo
 https://www.loom.com/share/17497cae5c9943e59b2455a951ec2c0f?sid=4935b816-a64b-4e13-b853-f21a8bc759c4
 
-##Snapshots
+## Snapshots
+
 https://github.com/hardattmangrola/MindSprint/blob/362967690edb33e692e6126454bcc43719d10d14/homepage1.png
 
 ### Core Features
