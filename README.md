@@ -11,6 +11,9 @@ https://www.loom.com/share/17497cae5c9943e59b2455a951ec2c0f?sid=4935b816-a64b-4e
 ## Snapshots
 
 ![image_alt](https://github.com/hardattmangrola/MindSprint/blob/362967690edb33e692e6126454bcc43719d10d14/homepage1.png)
+![image_alt](https://github.com/hardattmangrola/MindSprint/blob/3c50a6ac08395c2b4724cb04e23d6f962e80c7fe/wellness.png)
+![image_alt](https://github.com/hardattmangrola/MindSprint/blob/3c50a6ac08395c2b4724cb04e23d6f962e80c7fe/dashboard.png)
+![image_alt](https://github.com/hardattmangrola/MindSprint/blob/3c50a6ac08395c2b4724cb04e23d6f962e80c7fe/mindfulness.png)
 
 ### Core Features
 
