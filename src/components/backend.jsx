@@ -7,7 +7,7 @@ import objectiveData from '../../backend/objective.json';
 import personalityData from '../../backend/personality.json';
 import relationshipData from '../../backend/relationship.json';
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyAxIaot9KNo5tqG6h5DvyA0wY2AYSogIbg';
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const MODEL = 'gemini-1.5-flash';
 const URL = `https://generativelanguage.googleapis.com/v1/models/${MODEL}:generateContent?key=${API_KEY}`;
 
